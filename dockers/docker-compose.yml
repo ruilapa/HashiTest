@@ -1,0 +1,42 @@
+version: "2"
+services:
+#  logging:
+#    driver: syslog
+#    options:
+#      syslog-address: "tcp://192.168.0.42:123"
+#  syslog:
+#    restart: always
+#    image: balabit/syslog-ng
+#    ports:
+#      - "514:514/udp"
+#      - "601:601/tcp"
+#      - "6514:6514/tcp"
+  html:
+    restart: always
+    image: ./html
+  nginx:
+    restart: always
+    image: ./nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    ulimits:
+      nofile:
+        soft: 1048576
+        hard: 1048576
+    links:
+      - html
+    volumes_from:
+      - html
+    depends_on:
+      - html
+  redis:
+    restart: always
+    build: ./redis
+    ports:
+      - "6379:6379"
+  postgres:
+    restart: always
+    build: ./postgres
+    ports:
+      - "5432:5432"

@@ -1,0 +1,6 @@
+- name: Open some firewall ports
+ firewalld: port=80/tcp permanent=true state=enabled
+ firewalld: port=443/tcp permanent=true state=enabled
+
+#- name: Disable firewall
+#  service: name=firewalld state=stopped

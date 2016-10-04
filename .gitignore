@@ -1,0 +1,6 @@
+VENV
+.vagrant
+aws_deploy.pem
+config/awskeys.json
+ansible/install.retry
+ansible/roles/users/files/*.pub

@@ -1,0 +1,12 @@
+- hosts: all
+  become: yes
+  become_method: sudo
+  roles:
+    - { role: sudo }
+    - { role: update, when: update_packages == true }
+    - { role: yum_repos }
+    - { role: ssh }
+    - { role: lock_default_users, when: lock_users == true }
+    - { role: docker }
+    - { role: users }
+    - { role: firewall }

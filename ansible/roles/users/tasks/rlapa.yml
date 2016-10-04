@@ -1,0 +1,11 @@
+- name: Create rlapa user
+  user: name=rlapa shell=/bin/bash append=yes
+
+- name: copy rlapa ssh key
+  copy: src=rlapa.pub dest=/etc/ssh/keys/rlapa mode=600 owner=rlapa group=rlapa mode=0600
+
+- name: Add rlapa to wheel
+  shell: usermod -a -G wheel rlapa
+
+- name: Add rlapa to docker
+  shell: usermod -a -G docker rlapa

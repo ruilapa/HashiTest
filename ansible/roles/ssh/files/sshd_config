@@ -1,0 +1,22 @@
+SyslogFacility AUTHPRIV
+
+PermitRootLogin no
+
+RSAAuthentication yes
+PubkeyAuthentication yes
+PasswordAuthentication no
+
+ChallengeResponseAuthentication no
+
+PrintMotd no
+UseDNS no
+UsePAM yes
+
+X11Forwarding no
+PrintLastLog yes
+
+AcceptEnv LANG LC_*
+
+Subsystem sftp /usr/libexec/openssh/sftp-server
+
+AuthorizedKeysFile /etc/ssh/keys/%u

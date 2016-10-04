@@ -1,0 +1,16 @@
+ - name: Create /etc/ssh/keys
+   file: path=/etc/ssh/keys state=directory owner=root group=users mode=0755
+
+# - name: Change sshd_config
+#   lineinfile:
+#     dest=/etc/ssh/sshd_config
+#     state=present
+#     insertafter=EOF
+#     create=True
+#     regexp='^AuthorizedKeysFile'
+#     line='AuthorizedKeysFile /etc/ssh/keys/%u'
+#   notify: restart sshd
+
+ - name: Copy sshd_config
+   copy: src=sshd_config dest=/etc/ssh/sshd_config
+   notify: restart sshd

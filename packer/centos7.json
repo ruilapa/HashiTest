@@ -1,0 +1,119 @@
+{
+  "variables": {
+    "mirror_directory": "7.2.1511/isos/x86_64",
+    "iso_name": "CentOS-7-x86_64-Minimal-1511.iso",
+    "iso_checksum": "88c0437f0a14c6e2c94426df9d43cd67",
+    "iso_checksum_type": "md5",
+    "vm_cpus": "2",
+    "vm_mem": "1024",
+    "project_name": "docker"
+  },
+  "builders": [
+    {
+      "http_directory": "./",
+      "http_port_min": 9001,
+      "http_port_max": 9010,
+      "boot_command": [
+        "<esc><wait>",
+        "linux ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/http/ks.cfg ",
+        "<enter><wait>"
+      ],
+      "boot_wait": "5s",
+      "guest_os_type": "RedHat_64",
+      "headless": true,
+      "disk_size": "8192",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_urls": [
+         "http://mirror.fccn.pt/repos/pub/CentOS//{{user `mirror_directory`}}/{{user `iso_name`}}",
+         "http://ftp.up.pt/CentOS//{{user `mirror_directory`}}/{{user `iso_name`}}",
+         "http://ftp.dei.uc.pt/pub/linux/CentOS//{{user `mirror_directory`}}/{{user `iso_name`}}"
+      ],
+      "shutdown_command": "echo 'vagrant' | sudo -S /sbin/halt -h -p",
+      "shutdown_timeout": "1m",
+      "guest_additions_mode": "attach",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "3000s",
+      "type": "virtualbox-iso",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{ .Name }}",
+          "--cpus",
+          "{{user `vm_cpus`}}",
+          "--memory",
+          "{{user `vm_mem`}}",
+          "--vram",
+          "12",
+          "--accelerate3d",
+          "off",
+          "--usb",
+          "off",
+          "--audio",
+          "none",
+          "--boot1",
+          "disk",
+          "--boot2",
+          "dvd",
+          "--boot3",
+          "none",
+          "--boot4",
+          "none",
+          "--nictype1",
+          "virtio",
+          "--nic1",
+          "nat",
+          "--nictype2",
+          "virtio",
+          "--nictype3",
+          "virtio",
+          "--nictype4",
+          "virtio",
+          "--acpi",
+          "on",
+          "--ioapic",
+          "off",
+          "--chipset",
+          "piix3",
+          "--rtcuseutc",
+          "on",
+          "--hpet",
+          "on",
+          "--bioslogofadein",
+          "off",
+          "--bioslogofadeout",
+          "off",
+          "--bioslogodisplaytime",
+          "0",
+          "--biosbootmenu",
+          "disabled"
+        ],
+        [ "storagectl", "{{ .Name }}", "--name", "SATA", "--add", "sata", "--portcount", "2", "--bootable", "on" ]
+      ],
+      "vm_name": "packer_build_centos72-{{user `project_name`}}-{{isotime \"20060102\"}}"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+      "script": "scripts/ks.sh"
+    },
+    {
+      "type": "ansible",
+      "user": "vagrant",
+      "extra_arguments": ["--private-key", "./vagrant", "-vvvv", "--extra-vars", "@./config/test.json"],
+      "playbook_file": "../ansible/install.yml",
+      "ssh_authorized_key_file": "./vagrant.pub",
+      "sftp_command": "/usr/libexec/openssh/sftp-server -e"
+    }
+  ],
+  "post-processors": [
+    {
+      "output": "built_boxes/centos72-{{user `project_name`}}-{{isotime \"20060102\"}}.box",
+      "type": "vagrant"
+    }
+   ]
+}

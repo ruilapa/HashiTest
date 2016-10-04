@@ -1,0 +1,5 @@
+{
+    "update_packages": false,
+    "lock_users": false,
+    "check_mk_master_ip": "10.0.0.200"
+}

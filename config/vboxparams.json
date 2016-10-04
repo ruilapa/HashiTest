@@ -1,0 +1,5 @@
+{
+    "vbox_local_ip": "192.168.0.200",
+    "vbox_memory": 4096,
+    "vbox_cpus": 4
+}

@@ -1,0 +1,6 @@
+{
+	"hostname": "centos72",
+  "check_mk_master_ip": "10.0.0.200",
+  "update_packages": true,
+  "lock_users": false
+}
