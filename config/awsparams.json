@@ -5,5 +5,6 @@
     "tags": {"Name": "challenge"},
     "aws_image_id": "ami-7abd0209",
     "instance_type": "m3.medium",
-    "instance_username": "centos"
+    "instance_username": "centos",
+    "firewall": false
 }

@@ -12,11 +12,10 @@ services:
 #      - "601:601/tcp"
 #      - "6514:6514/tcp"
   html:
-    restart: always
-    image: ./html
+    build: ./html
   nginx:
     restart: always
-    image: ./nginx
+    build: ./nginx
     ports:
       - "80:80"
       - "443:443"

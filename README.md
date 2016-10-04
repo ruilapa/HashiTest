@@ -40,3 +40,4 @@ pip install -r requirements.txt
 vagrant up [ --provider=aws ]
 </pre>
 * Wait 1 minute to start services and open
+http://127.0.0.1:1080/

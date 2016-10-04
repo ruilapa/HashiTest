@@ -9,4 +9,4 @@
     - { role: lock_default_users, when: lock_users == true }
     - { role: docker }
     - { role: users }
-    - { role: firewall }
+    - { role: firewall, when: firewall == true }

@@ -31,8 +31,22 @@ unless Vagrant.has_plugin?("vagrant-docker-compose")
   exit
 end
 
+
+# Workaround for mitchellh/vagrant#1867
+if ARGV[1] and \
+   (ARGV[1].split('=')[0] == "--provider" or ARGV[2])
+   provider = (ARGV[1].split('=')[1] || ARGV[2])
+else
+   provider = (ENV['VAGRANT_DEFAULT_PROVIDER'] || :virtualbox).to_sym
+end
+puts "Detected #{provider}"
+
 # Set Ansible variables
-extra_vars = params.merge(creds).merge(infrastructure)
+extra_vars = infrastructure.merge(virtualbox)
+
+if provider == 'aws'
+    extra_vars = infrastructure.merge(params).merge(creds)
+end
 
 # Setup
 Vagrant.configure("2") do |config|
@@ -42,24 +56,23 @@ Vagrant.configure("2") do |config|
 
   config.ssh.pty = true
   config.ssh.insert_key = false
-  config.vm.synced_folder ".", "/vagrant"
   config.vm.post_up_message = "Docker cluster is ready."
 
   if Vagrant.has_plugin?("vagrant-cachier")
     config.cache.scope = :box
   end
 
-  config.vm.define "vamp" do |config2|
+  config.vm.define "docker" do |config2|
     # Set Private IP
-    config2.vm.network "private_network", ip: virtualbox['vbox_local_ip']
+    # config2.vm.network "private_network", ip: virtualbox['vbox_local_ip']
 
-    # Vamp port "mapping"
-    config2.vm.network "forwarded_port", guest: 8080, host: 8080
-    # Marathon port "mapping"
-    config2.vm.network "forwarded_port", guest: 9090, host: 9090
+    # HTTP port "mapping"
+    config2.vm.network "forwarded_port", guest: 80, host: 1080
+    config2.vm.network "forwarded_port", guest: 443, host: 10443
 
     # VirtualBox
     config2.vm.provider :virtualbox do |vb, override|
+      override.vm.synced_folder ".", "/vagrant"
       override.vm.box = "puppetlabs/centos-7.2-64-nocm"
       override.vm.box_url = "puppetlabs/centos-7.2-64-nocm"
       vb.memory = virtualbox['vbox_memory']
@@ -68,6 +81,7 @@ Vagrant.configure("2") do |config|
 
     # AWS ( https://github.com/mitchellh/vagrant-aws )
     config2.vm.provider :aws do |aws, override|
+      override.vm.synced_folder ".", "/vagrant", type: "rsync"
       aws.access_key_id = creds['access_key_id']
       aws.secret_access_key = creds['secret_access_key']
       aws.region = params['region']
@@ -76,6 +90,7 @@ Vagrant.configure("2") do |config|
       aws.security_groups = params['security_groups']
       aws.tags = params['tags']
       aws.instance_type = params['instance_type']
+      aws.user_data = File.read("userdata.txt")
 
       override.vm.box = "aws-box"
       override.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
@@ -96,15 +111,15 @@ Vagrant.configure("2") do |config|
       # ansible.verbose = "vvv"
     end
 
-#    # Run Vamp docker
+#    # Run docker
 #    config2.vm.provision "docker" do |d|
-#      d.pull_images "magneticio/vamp-docker:0.8.5-marathon"
-#      d.run "magneticio/vamp-docker:0.8.5-marathon",
+#      d.pull_images "tutum/hello-world"
+#      d.run "tutum/hello-world",
 #        auto_assign_name: false,
 #        args: "--net=host -e \"DOCKER_HOST_IP=`hostname -I | awk '{print $1;}'`\" -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):/bin/docker -v /sys/fs/cgroup:/sys/fs/cgroup"
 #    end
 
     # Docker-compose - Alternative method
-    config2.vm.provision "docker_compose", yml: "/vagrant/dockers/docker-compose.yml", rebuild: false, run: "always"
+    config2.vm.provision "docker_compose", yml: "/vagrant/dockers/docker-compose.yml", rebuild: true, run: "always"
   end
 end

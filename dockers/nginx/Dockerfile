@@ -19,10 +19,10 @@ RUN touch /var/log/nginx/access.log
 RUN mkdir -p /etc/nginx/ssl
 RUN mkdir -p /etc/nginx/conf.d
 
-ADD run.sh /etc/nginx/run.sh
-RUN chmod 755 /etc/nginx/run.sh
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY default.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 EXPOSE 443
 
-CMD ["/etc/nginx/run.sh"]
+CMD ["nginx"]
