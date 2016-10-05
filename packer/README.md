@@ -7,21 +7,31 @@
 
 ## Packer validate
 
-`packer validate vbox.json`
+<pre>
+packer validate vbox.json
+</pre>
 
 ## Build
 
-`packer build -var-file=config/test.json vbox.json`
+<pre>
+packer build -var-file=config/test.json vbox.json
+</pre>
 
 ### Debug
 
-`PACKER_LOG=1 PACKER_LOG_PATH=/tmp/packer.log packer build -var-file=config/test.json vbox.json` 
+<pre>
+PACKER_LOG=1 PACKER_LOG_PATH=/tmp/packer.log packer build -var-file=config/test.json vbox.json
+</pre>
 
 ## Test
 
+<pre>
 vagrant box remove centos$(date +%Y%m%d)
 vagrant up
+</pre>
 
 ## Clear Test
 
+<pre>
 vagrant destroy
+</pre>
