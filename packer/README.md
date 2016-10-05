@@ -8,19 +8,19 @@
 ## Packer validate
 
 <pre>
-packer validate vbox.json
+packer validate centos7.json
 </pre>
 
 ## Build
 
 <pre>
-packer build -var-file=config/test.json vbox.json
+packer build -var-file=config/test.json centos7.json
 </pre>
 
 ### Debug
 
 <pre>
-PACKER_LOG=1 PACKER_LOG_PATH=/tmp/packer.log packer build -var-file=config/test.json vbox.json
+PACKER_LOG=1 PACKER_LOG_PATH=/tmp/packer.log packer build -var-file=config/test.json centos7.json
 </pre>
 
 ## Test
