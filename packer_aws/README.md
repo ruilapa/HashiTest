@@ -20,13 +20,13 @@ packer validate amazon_ami.json
 ## Build
 
 <pre>
-packer build -var-file=config/test.json amazon_ami.json
+packer build -var-file=config/aws.json -var-file=config/ansible.json amazon_ami.json
 </pre>
 
 ### Debug
 
 <pre>
-PACKER_LOG=1 PACKER_LOG_PATH=/tmp/packer.log packer build -var-file=config/test.json amazon_ami.json
+PACKER_LOG=1 PACKER_LOG_PATH=/tmp/packer.log packer build -var-file=config/aws.json -var-file=config/ansible.json amazon_ami.json
 </pre>
 
 ## Test
