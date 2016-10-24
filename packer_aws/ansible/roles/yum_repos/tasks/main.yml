@@ -1,0 +1,2 @@
+- name: Install EPEL repository
+  yum: name=epel-release disable_gpg_check=yes state=latest update_cache=yes

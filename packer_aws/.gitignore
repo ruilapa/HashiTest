@@ -1,0 +1,5 @@
+*.pem
+packer_cache
+output-virtualbox-iso
+config/aws.json
+ansible/roles/users/files/*.pub

@@ -1,0 +1,9 @@
+{
+  "access_key_id": "",
+  "secret_access_key": "",
+  "amazon_region": "eu-west-1",
+  "amazon_ami": "ami-d41d58a7",
+  "amazon_instance_type": "t2.micro",
+  "ssh_keypair_name": "packer",
+  "ssh_private_key_file": "packer.pem"
+}

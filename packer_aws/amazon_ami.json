@@ -1,0 +1,47 @@
+{
+  "variables": {
+    "project_name": "docker"
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "access_key": "{{user `access_key_id`}}",
+      "secret_key": "{{user `secret_access_key`}}",
+      "region": "{{user `amazon_region`}}",
+      "source_ami": "{{user `amazon_ami`}}",
+      "instance_type": "{{user `amazon_instance_type`}}",
+      "ssh_username": "ec2-user",
+      "ssh_keypair_name": "{{user `ssh_keypair_name`}}",
+      "ssh_private_key_file": "{{user `ssh_private_key_file`}}",
+      "ami_name": "packer_build_centos72-{{user `project_name`}}-{{isotime \"20060102\"}}",
+      "tags": {
+        "Name": "packer_build_centos72-{{user `project_name`}}-{{isotime \"20060102\"}}"
+      }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "ansible",
+      "destination": "/home/ec2-user/ansible"
+    },
+    {
+      "type": "file",
+      "source": "ansible.cfg",
+      "destination": "/home/ec2-user/ansible.cfg"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sleep 10",
+        "sudo /usr/bin/yum install -y ansible python-setuptools"
+      ]
+    },
+    {
+      "type": "ansible",
+      "command": "/usr/bin/ansible-playbook",
+      "extra_arguments": [ "--extra-vars", "@ansible/config.json" ],
+      "playbook_file": "ansible/install.yml"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "hostname": "centos72",
+  "update_packages": "true",
+  "lock_users": "false",
+  "firewall": "true"
+}

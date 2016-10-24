@@ -1,0 +1,17 @@
+- name: Install docker repository file
+  copy: src=docker.repo dest=/etc/yum.repos.d/docker.repo
+
+- name: Install docker packages
+  yum: name={{ item }} state=present
+  with_items:
+    - docker-engine
+
+- name: Change /etc/security/limits.conf nofile 64000
+  pam_limits: domain=* limit_type=- limit_item=nofile value=64000
+
+- name: Sysctl file-max 64000
+  sysctl:
+    name: fs.file-max
+    value: 64000
+    state: present
+  notify: restart docker
